@@ -83,4 +83,9 @@ class DefaultController extends Controller
             $this->getDoctrine()->getManager()->flush();
         }
     }
+
+    public function apiAction()
+    {
+        return new Response(file_get_contents(__DIR__ . '/../../../web/swagger.json'));
+    }
 }

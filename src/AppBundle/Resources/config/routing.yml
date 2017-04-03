@@ -1,3 +1,7 @@
+app_get_api:
+    path: /api
+    defaults: { _controller: AppBundle:Default:api }
+
 app_get_device:
     path:     /{device}
     defaults: { _controller: AppBundle:Default:get }
