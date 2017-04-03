@@ -2,6 +2,7 @@
 
 namespace AppBundle\Tests\Controller;
 
+use AppBundle\Model\DeviceState;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 
 class DefaultControllerTest extends WebTestCase
@@ -31,10 +32,10 @@ class DefaultControllerTest extends WebTestCase
     {
         return [
             ['not-existing', 404, null],
-            ['dishwasher', 200, ['name' => 'dishwasher', 'program' => 'super clean', 'remaining' => 0, 'state' => 'ready']],
-            ['kitten-washer', 200, ['name' => 'kitten-washer', 'program' => 'kitten clean', 'remaining' => 10, 'state' => 'running']],
-            ['dishwasher-perfect-edition', 200, ['name' => 'dishwasher-perfect-edition', 'program' => 'perfect wash', 'remaining' => 0, 'state' => 'open']],
-            ['oven', 200, ['name' => 'oven', 'program' => 'hot like hell', 'remaining' => 20, 'state' => 'running']],
+            ['dishwasher', 200, ['name' => 'dishwasher', 'program' => 'super clean', 'remaining' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => false]],
+            ['kitten-washer', 200, ['name' => 'kitten-washer', 'program' => 'kitten clean', 'remaining' => 10, 'state' => DeviceState::STATE_RUNNING, 'door_open' => false]],
+            ['dishwasher-perfect-edition', 200, ['name' => 'dishwasher-perfect-edition', 'program' => 'perfect wash', 'remaining' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => true]],
+            ['oven', 200, ['name' => 'oven', 'program' => 'hot like hell', 'remaining' => 20, 'state' => DeviceState::STATE_RUNNING, 'door_open' => false]],
         ];
     }
 
@@ -58,16 +59,16 @@ class DefaultControllerTest extends WebTestCase
     public function stateChangeDataProvider()
     {
         return [
-            ['not-existing', ['state' => 'running'], 404, null],
+            ['not-existing', ['state' => DeviceState::STATE_RUNNING], 404, null],
 
-            ['kitten-washer', ['state' => 'open'], 400, null],
-            ['kitten-washer', ['state' => 'ready'], 200, ['name' => 'kitten-washer', 'program' => 'kitten clean', 'remaining' => 0, 'state' => 'ready']],
+            ['kitten-washer', ['door_open' => true], 400, null],
+            ['kitten-washer', ['state' => DeviceState::STATE_READY], 200, ['name' => 'kitten-washer', 'program' => 'kitten clean', 'remaining' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => false]],
 
-            ['dishwasher-perfect-edition', ['state' => 'running'], 400, null],
-            ['dishwasher-perfect-edition', ['state' => 'ready'], 200, ['name' => 'dishwasher-perfect-edition', 'program' => 'perfect wash', 'remaining' => 0, 'state' => 'ready']],
+            ['dishwasher-perfect-edition', ['state' => DeviceState::STATE_RUNNING], 400, null],
+            ['dishwasher-perfect-edition', ['door_open' => false], 200, ['name' => 'dishwasher-perfect-edition', 'program' => 'perfect wash', 'remaining' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => false]],
 
-            ['dishwasher', ['state' => 'running'], 200, ['name' => 'dishwasher', 'program' => 'super clean', 'remaining' => 10, 'state' => 'running']],
-            ['dishwasher', ['state' => 'open'], 200, ['name' => 'dishwasher', 'program' => 'super clean', 'remaining' => 0, 'state' => 'open']],
+            ['dishwasher', ['state' => DeviceState::STATE_RUNNING], 200, ['name' => 'dishwasher', 'program' => 'super clean', 'remaining' => 10, 'state' => DeviceState::STATE_RUNNING, 'door_open' => false]],
+            ['dishwasher', ['door_open' => true], 200, ['name' => 'dishwasher', 'program' => 'super clean', 'remaining' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => true]],
         ];
     }
 

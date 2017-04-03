@@ -22,7 +22,11 @@ class Device
      */
     private $state;
 
-    private $nextStates;
+    /**
+     * @var boolean
+     * @ORM\Column(type="boolean", length=32)
+     */
+    private $doorOpen;
 
     /**
      * @var int
@@ -55,7 +59,7 @@ class Device
     /**
      * @return string
      */
-    public function getState(): string
+    public function getState()
     {
         return $this->state;
     }
@@ -100,5 +104,23 @@ class Device
     {
         $this->program = $program;
     }
+
+    /**
+     * @return bool|null
+     */
+    public function isDoorOpen()
+    {
+        return $this->doorOpen;
+    }
+
+    /**
+     * @param bool $doorOpen
+     */
+    public function setDoorOpen(bool $doorOpen)
+    {
+        $this->doorOpen = $doorOpen;
+    }
+
+
 
 }

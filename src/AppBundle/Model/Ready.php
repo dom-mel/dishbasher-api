@@ -6,24 +6,19 @@ namespace AppBundle\Model;
 use AppBundle\Entity\Device;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class Ready extends AbstractState
+class Ready extends DeviceState
 {
-    public function open(): Device
-    {
-        $this->device->setState('open');
-        $this->device->setRemaining(0);
-        return $this->device;
-    }
-
     public function running(): Device
     {
         if (empty($this->device->getProgram())) {
             throw new HttpException(400);
         }
-        $this->device->setState('running');
+        if ($this->device->isDoorOpen()) {
+            throw new HttpException(400);
+        }
+        $this->device->setState(self::STATE_RUNNING);
         $this->device->setRemaining(10);
         return $this->device;
     }
-
 
 }

@@ -6,8 +6,11 @@ namespace AppBundle\Model;
 use AppBundle\Entity\Device;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class AbstractState
+abstract class DeviceState
 {
+
+    const STATE_READY = 'ready';
+    const STATE_RUNNING = 'running';
 
     protected $device;
 
@@ -21,13 +24,9 @@ class AbstractState
         throw new HttpException(400);
     }
 
-    public function open() : Device
-    {
-        throw new HttpException(400);
-    }
-
     public function running() : Device
     {
         throw new HttpException(400);
     }
+
 }

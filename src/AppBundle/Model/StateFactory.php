@@ -10,12 +10,11 @@ class StateFactory
 {
 
     private static $validStates = [
-        'ready' => Ready::class,
-        'open' => Open::class,
-        'running' => Running::class
+        DeviceState::STATE_READY => Ready::class,
+        DeviceState::STATE_RUNNING => Running::class
     ];
 
-    public static function createState(Device $device) : AbstractState
+    public static function createState(Device $device) : DeviceState
     {
         if (!self::validState($device)) {
             throw new Exception();

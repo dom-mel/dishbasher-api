@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Device;
+use AppBundle\Model\DeviceState;
 use AppBundle\Model\StateFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,12 +44,24 @@ class DefaultController extends Controller
             throw new HttpException(404);
         }
 
+        if ($patch->isDoorOpen() !== null) {
+            if ($patch->isDoorOpen() === $ownDevice->isDoorOpen()) {
+                throw new HttpException(400);
+            }
+            if ($ownDevice->getState() === DeviceState::STATE_RUNNING) {
+                throw new HttpException(400);
+            }
+            $ownDevice->setDoorOpen($patch->isDoorOpen());
+            $entityManager->merge($ownDevice);
+        }
+
         if ($patch->getState() !== null && StateFactory::validState($patch)) {
             $ownDeviceState = StateFactory::createState($ownDevice);
             $ownDeviceState->{$patch->getState()}();
             $entityManager->merge($ownDevice);
-            $entityManager->flush();
         }
+
+        $entityManager->flush();
 
         return new Response(
             $serializer->serialize($ownDevice, 'json'),
