@@ -22,6 +22,7 @@ class DefaultControllerTest extends WebTestCase
     public function testGetDevice(string $device, int $responseCode, array $response = null)
     {
         $client = static::createClient();
+        Time::$currentTime = 5;
 
         $client->request('GET', '/' . $device);
 
@@ -72,6 +73,21 @@ class DefaultControllerTest extends WebTestCase
             ['dishwasher', ['state' => DeviceState::STATE_RUNNING], 200, ['name' => 'dishwasher', 'program' => 'super clean', 'finishes_at' => 15, 'state' => DeviceState::STATE_RUNNING, 'door_open' => false]],
             ['dishwasher', ['door_open' => true], 200, ['name' => 'dishwasher', 'program' => 'super clean', 'finishes_at' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => true]],
         ];
+    }
+
+    /**
+     * @group time-sensitive
+     */
+    public function testDone()
+    {
+        $run = $this->stateChangeDataProvider()[5];
+        $this->testStateChange($run[0], $run[1], $run[2], $run[3]);
+        sleep(10);
+        $client = static::createClient();
+        $client->request('GET', '/dishwasher');
+        $result = json_decode($client->getResponse()->getContent(), true);
+        $this->assertEquals(DeviceState::STATE_READY, $result['state']);
+
     }
 
 

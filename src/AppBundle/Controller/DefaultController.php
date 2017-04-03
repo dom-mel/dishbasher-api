@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Device;
 use AppBundle\Model\DeviceState;
 use AppBundle\Model\StateFactory;
+use AppBundle\Model\Time;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,7 @@ class DefaultController extends Controller
         if ($device === null) {
             throw new HttpException(404);
         }
-
+        $this->maintainState($device);
         return new Response(
             $serializer->serialize($device, 'json'),
             200
@@ -43,6 +44,8 @@ class DefaultController extends Controller
         if ($ownDevice === null) {
             throw new HttpException(404);
         }
+
+        $this->maintainState($ownDevice);
 
         if ($patch->isDoorOpen() !== null) {
             if ($patch->isDoorOpen() === $ownDevice->isDoorOpen()) {
@@ -67,5 +70,17 @@ class DefaultController extends Controller
             $serializer->serialize($ownDevice, 'json'),
             200
         );
+    }
+
+    private function maintainState(Device $device)
+    {
+        if ($device->getState() === DeviceState::STATE_RUNNING
+            && $device->getFinishesAt() - (new Time())->time() < 0
+        ) {
+            $device->setFinishesAt(0);
+            $device->setState(DeviceState::STATE_READY);
+            $this->getDoctrine()->getManager()->merge($device);
+            $this->getDoctrine()->getManager()->flush();
+        }
     }
 }
