@@ -1,0 +1,93 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "0.1.0",
+    "title" : "Whitegoods as a Service"
+  },
+  "host" : "127.0.0.1:8000",
+  "schemes" : [ "http" ],
+  "consumes" : [ "application/json" ],
+  "produces" : [ "application/json" ],
+  "paths" : {
+    "/{device}" : {
+      "get" : {
+        "summary" : "Returns current state of device",
+        "parameters" : [ {
+          "name" : "device",
+          "in" : "path",
+          "description" : "Device to show state - currently there is only dishwasher",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Current state of the device",
+            "schema" : {
+              "$ref" : "#/definitions/Device"
+            }
+          },
+          "404" : {
+            "description" : "Device not found"
+          }
+        }
+      },
+      "patch" : {
+        "parameters" : [ {
+          "name" : "device",
+          "in" : "path",
+          "description" : "Device to show state - currently there is only dishwasher",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "state",
+          "description" : "desired state to switch to",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/Device"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Current state of the device",
+            "schema" : {
+              "$ref" : "#/definitions/Device"
+            }
+          },
+          "400" : {
+            "description" : "Change not possible"
+          },
+          "404" : {
+            "description" : "Device not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Device" : {
+      "required" : [ "name", "nextStates", "program", "remaining", "state" ],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "state" : {
+          "type" : "string"
+        },
+        "nextStates" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "remaining" : {
+          "type" : "integer",
+          "description" : "Remaining time in seconds"
+        },
+        "program" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}
