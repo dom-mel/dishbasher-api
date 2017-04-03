@@ -24,7 +24,7 @@ class LoadDevices implements FixtureInterface
             $deviceEntity->setName($device[0]);
             $deviceEntity->setState($device[1]);
             $deviceEntity->setProgram($device[2]);
-            $deviceEntity->setRemaining($device[3]);
+            $deviceEntity->setFinishesAt($device[3]);
             $deviceEntity->setDoorOpen($device[4]);
             $manager->persist($deviceEntity);
         }

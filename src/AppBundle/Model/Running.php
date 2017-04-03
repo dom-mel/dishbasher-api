@@ -13,7 +13,7 @@ class Running extends DeviceState
         if ($this->device->getState() === self::STATE_READY) {
             throw new HttpException(400);
         }
-        $this->device->setRemaining(0);
+        $this->device->setFinishesAt(0);
         $this->device->setState(self::STATE_READY);
         return $this->device;
     }

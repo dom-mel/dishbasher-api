@@ -3,6 +3,7 @@
 namespace AppBundle\Tests\Controller;
 
 use AppBundle\Model\DeviceState;
+use AppBundle\Model\Time;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 
 class DefaultControllerTest extends WebTestCase
@@ -32,10 +33,10 @@ class DefaultControllerTest extends WebTestCase
     {
         return [
             ['not-existing', 404, null],
-            ['dishwasher', 200, ['name' => 'dishwasher', 'program' => 'super clean', 'remaining' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => false]],
-            ['kitten-washer', 200, ['name' => 'kitten-washer', 'program' => 'kitten clean', 'remaining' => 10, 'state' => DeviceState::STATE_RUNNING, 'door_open' => false]],
-            ['dishwasher-perfect-edition', 200, ['name' => 'dishwasher-perfect-edition', 'program' => 'perfect wash', 'remaining' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => true]],
-            ['oven', 200, ['name' => 'oven', 'program' => 'hot like hell', 'remaining' => 20, 'state' => DeviceState::STATE_RUNNING, 'door_open' => false]],
+            ['dishwasher', 200, ['name' => 'dishwasher', 'program' => 'super clean', 'finishes_at' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => false]],
+            ['kitten-washer', 200, ['name' => 'kitten-washer', 'program' => 'kitten clean', 'finishes_at' => 10, 'state' => DeviceState::STATE_RUNNING, 'door_open' => false]],
+            ['dishwasher-perfect-edition', 200, ['name' => 'dishwasher-perfect-edition', 'program' => 'perfect wash', 'finishes_at' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => true]],
+            ['oven', 200, ['name' => 'oven', 'program' => 'hot like hell', 'finishes_at' => 20, 'state' => DeviceState::STATE_RUNNING, 'door_open' => false]],
         ];
     }
 
@@ -44,6 +45,7 @@ class DefaultControllerTest extends WebTestCase
      */
     public function testStateChange(string $device, array $request, int $responseCode, array $response = null)
     {
+        Time::$currentTime = 5;
         $client = static::createClient();
 
         $serializer = $client->getKernel()->getContainer()->get('jms_serializer');
@@ -62,13 +64,13 @@ class DefaultControllerTest extends WebTestCase
             ['not-existing', ['state' => DeviceState::STATE_RUNNING], 404, null],
 
             ['kitten-washer', ['door_open' => true], 400, null],
-            ['kitten-washer', ['state' => DeviceState::STATE_READY], 200, ['name' => 'kitten-washer', 'program' => 'kitten clean', 'remaining' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => false]],
+            ['kitten-washer', ['state' => DeviceState::STATE_READY], 200, ['name' => 'kitten-washer', 'program' => 'kitten clean', 'finishes_at' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => false]],
 
             ['dishwasher-perfect-edition', ['state' => DeviceState::STATE_RUNNING], 400, null],
-            ['dishwasher-perfect-edition', ['door_open' => false], 200, ['name' => 'dishwasher-perfect-edition', 'program' => 'perfect wash', 'remaining' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => false]],
+            ['dishwasher-perfect-edition', ['door_open' => false], 200, ['name' => 'dishwasher-perfect-edition', 'program' => 'perfect wash', 'finishes_at' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => false]],
 
-            ['dishwasher', ['state' => DeviceState::STATE_RUNNING], 200, ['name' => 'dishwasher', 'program' => 'super clean', 'remaining' => 10, 'state' => DeviceState::STATE_RUNNING, 'door_open' => false]],
-            ['dishwasher', ['door_open' => true], 200, ['name' => 'dishwasher', 'program' => 'super clean', 'remaining' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => true]],
+            ['dishwasher', ['state' => DeviceState::STATE_RUNNING], 200, ['name' => 'dishwasher', 'program' => 'super clean', 'finishes_at' => 15, 'state' => DeviceState::STATE_RUNNING, 'door_open' => false]],
+            ['dishwasher', ['door_open' => true], 200, ['name' => 'dishwasher', 'program' => 'super clean', 'finishes_at' => 0, 'state' => DeviceState::STATE_READY, 'door_open' => true]],
         ];
     }
 

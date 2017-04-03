@@ -17,7 +17,7 @@ class Ready extends DeviceState
             throw new HttpException(400);
         }
         $this->device->setState(self::STATE_RUNNING);
-        $this->device->setRemaining(10);
+        $this->device->setFinishesAt((new Time())->time() + 10);
         return $this->device;
     }
 

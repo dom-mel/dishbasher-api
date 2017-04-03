@@ -32,7 +32,7 @@ class Device
      * @var int
      * @ORM\Column(type="integer")
      */
-    private $remaining;
+    private $finishesAt;
 
     /**
      * @var string
@@ -76,17 +76,17 @@ class Device
     /**
      * @return int
      */
-    public function getRemaining(): int
+    public function getFinishesAt(): int
     {
-        return $this->remaining;
+        return $this->finishesAt;
     }
 
     /**
-     * @param int $remaining
+     * @param int $finishesAt
      */
-    public function setRemaining(int $remaining)
+    public function setFinishesAt(int $finishesAt)
     {
-        $this->remaining = $remaining;
+        $this->finishesAt = $finishesAt;
     }
 
     /**
