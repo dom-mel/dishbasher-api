@@ -1,69 +1,26 @@
-Symfony Standard Edition
-========================
+# Dishwasher API
 
-Welcome to the Symfony Standard Edition - a fully-functional Symfony
-application that you can use as the skeleton for your new applications.
+Provides a simple API for a dishwasher.
 
-For details on how to download and get started with Symfony, see the
-[Installation][1] chapter of the Symfony Documentation.
+Build on Symfony, using:
+* Doctrine + Sqlite
+* JMS Serializer
+* nelmio/cors-bundle
+* doctrine-fixtures-bundle
 
-What's inside?
---------------
+## API Documentation
+Swagger file in /web/swagger.json or use the [dishwasher-docker](https://github.com/dom-mel/dishwasher-docker) and provided swagger ui.
+ 
+## Structure
 
-The Symfony Standard Edition is configured with the following defaults:
+![UML](diagram.png)
 
-  * An AppBundle you can use to start coding;
-
-  * Twig as the only configured template engine;
-
-  * Doctrine ORM/DBAL;
-
-  * Swiftmailer;
-
-  * Annotations enabled for everything.
-
-It comes pre-configured with the following bundles:
-
-  * **FrameworkBundle** - The core Symfony framework bundle
-
-  * [**SensioFrameworkExtraBundle**][6] - Adds several enhancements, including
-    template and routing annotation capability
-
-  * [**DoctrineBundle**][7] - Adds support for the Doctrine ORM
-
-  * [**TwigBundle**][8] - Adds support for the Twig templating engine
-
-  * [**SecurityBundle**][9] - Adds security by integrating Symfony's security
-    component
-
-  * [**SwiftmailerBundle**][10] - Adds support for Swiftmailer, a library for
-    sending emails
-
-  * [**MonologBundle**][11] - Adds support for Monolog, a logging library
-
-  * **WebProfilerBundle** (in dev/test env) - Adds profiling functionality and
-    the web debug toolbar
-
-  * **SensioDistributionBundle** (in dev/test env) - Adds functionality for
-    configuring and working with Symfony distributions
-
-  * [**SensioGeneratorBundle**][13] (in dev/test env) - Adds code generation
-    capabilities
-
-  * **DebugBundle** (in dev/test env) - Adds Debug and VarDumper component
-    integration
-
-All libraries and bundles included in the Symfony Standard Edition are
-released under the MIT or BSD license.
-
-Enjoy!
-
-[1]:  https://symfony.com/doc/3.2/setup.html
-[6]:  https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/index.html
-[7]:  https://symfony.com/doc/3.2/doctrine.html
-[8]:  https://symfony.com/doc/3.2/templating.html
-[9]:  https://symfony.com/doc/3.2/security.html
-[10]: https://symfony.com/doc/3.2/email.html
-[11]: https://symfony.com/doc/3.2/logging.html
-[12]: https://symfony.com/doc/3.2/assetic/asset_management.html
-[13]: https://symfony.com/doc/current/bundles/SensioGeneratorBundle/index.html
+* A device is stored as `Device` as doctrine entity
+* The State logic is modeled via state pattern in `DeviceState` and subclasses
+* To create the right state of a device a `StateFactory` is provided
+* API calls are build in the `DefaultController`
+  * Reading a device is in the getAction
+  * Changing a device is in the patchAction
+  * apiAction provides the swagger documentation
+* Time is used to be able to fake time in automated test
+* Features are tested using Symfony web driver and doctrine fixtures to provide reproducible state.
